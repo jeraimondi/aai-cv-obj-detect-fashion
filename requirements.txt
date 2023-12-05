@@ -2,4 +2,4 @@ streamlit
 pillow
 streamlit_image_select
 ultralytics
-opencv-python
+opencv-python-headless
