@@ -1,4 +1,5 @@
 streamlit
-Pillow
+pillow
 streamlit_image_select
 ultralytics
+cv2
