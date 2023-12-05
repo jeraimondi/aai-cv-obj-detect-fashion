@@ -1,6 +1,6 @@
 import streamlit as st
-from PIL import Image
 from streamlit_image_select import image_select
+from PIL import Image
 from ultralytics import YOLO
 
 # set session state variables for persistence
@@ -18,7 +18,7 @@ st.set_page_config(
     page_title='Fashion Object Detection',  # set page title
     page_icon='👜',  # set page icon
     layout='wide',  # set layout to wide
-    initial_sidebar_state='expanded',  # expand sidebar by default
+    initial_sidebar_state='auto',  # expand sidebar by default
 )
 
 
@@ -31,7 +31,7 @@ with st.sidebar:
         image = image.convert('RGB')
         return image
 
-
+    # sidebar header
     st.header('Image Selection')  # add header to sidebar
 
     # file uploader
@@ -57,9 +57,9 @@ st.caption('Select a sample fashion photo, or upload your own! - Recommended :bl
 st.caption('Afterwards, click the :blue[Detect Objects] button to see the results.')
 
 # create three columns on the main page
-col1, col2, col3 = st.columns(3)
+col1, col2, col3 = st.columns([0.25, 0.25, 0.25], gap='medium')
 
-# col 1 containing image samples
+# col 1 containing sample images
 with col1:
     sample_img = image_select(
         label='Select a sample fashion photo',
@@ -75,77 +75,80 @@ with col1:
         use_container_width=False
     )
 
-# col 2 containing input/source image
+# create col 2 containers
 with col2:
-    @st.cache_data
-    def display_img_col2(image):
-        with st.container(border=True):
-            if source_img is not None:
-                # add the uploaded image to col2 with a caption
-                st.image(image,
-                         caption='Input',
-                         use_column_width=True
-                         )
+    with st.container(border=True):
+        container_col2 = st.empty()
 
-    # obtain image from file uploader, otherwise load sample image
-    if st.session_state.uploaded_img is not None:
-        source_img = st.session_state.uploaded_img
+# obtain image from file uploader, otherwise load sample image
+source_img = None
+if st.session_state.uploaded_img is not None:
+    source_img = st.session_state.uploaded_img.copy()
+    st.session_state.uploaded_img = None
+elif sample_img is not None:
+    source_img = sample_img
+    sample_img = None
+
+# display source/input image in col 2
+container_col2.image(source_img,
+                     caption='Input',
+                     use_column_width=True
+                     )
+
+
+@st.cache_resource
+def load_model(path):
+    return YOLO(path)
+
+
+@st.cache_data
+def run_model(inputs):
+    return model(inputs)
+
+
+# path to pretrained model
+model_path = 'models/best.pt'
+
+try:
+    # load model
+    model = load_model(model_path)
+except Exception as e:
+    st.error(f"Unable to load model. Check the specified path: {model_path}.")
+    st.error(e)
+
+try:
+    # sidebar detect objects button
+    if st.sidebar.button('Detect Objects'):
+
+        # clear session state to avoid image being used more than once
         st.session_state.uploaded_img = None
-    elif sample_img is not None:
-        source_img = sample_img
-        sample_img = None
 
-    # call function to display the image in col 2
-    display_img_col2(source_img)
+        # perform object detection using model
+        results = model.predict(source_img,
+                                save=False,
+                                imgsz=(608, 416),  # image size must be multiple of max stride 32
+                                conf=st.session_state.confidence,  # confidence selected by slider
+                                iou=st.session_state.iou_thresh  # IOU threshold selected by slider
+                                )
 
-# col 3 contains the result image as well as modeling logic
-with col3:
-    @st.cache_resource
-    def load_model(path):
-        return YOLO(path)
+        # plot model results, and convert to RGB PIL image
+        for r in results:
+            im_array = r.plot()
+            im = Image.fromarray(im_array[..., ::-1])
 
-    @st.cache_data
-    def run_model(inputs):
-        return model(inputs)
-
-    # path to pretrained model
-    model_path = 'models/best.pt'
-
-    try:
-        # load model
-        model = load_model(model_path)
-    except Exception as e:
-        st.error(f"Unable to load model. Check the specified path: {model_path}.")
-        st.error(e)
-
-    try:
-        # sidebar detect objects button
-        if st.sidebar.button('Detect Objects'):
-
-            # clear session state to avoid image being used more than once
-            st.session_state.uploaded_img = None
-
-            # perform object detection using model
-            results = model.predict(source_img,
-                                    save=False,
-                                    imgsz=(608, 416),  # image size must be multiple of max stride 32
-                                    conf=st.session_state.confidence,  # confidence selected by slider
-                                    iou=st.session_state.iou_thresh  # IOU threshold selected by slider
-                                    )
-
-            # plot model results, and convert to RGB PIL image
-            for r in results:
-                im_array = r.plot()
-                im = Image.fromarray(im_array[..., ::-1])
-
-            # display result image in col 3
+        # display result image in col 3
+        with col3:
             with st.container(border=True):
-                st.image(im,
-                         caption='Result',
-                         use_column_width=True
-                         )
-                source_img = None
+                with st.empty():
+                    st.image(im,
+                             caption='Result',
+                             use_column_width=True
+                             )
 
-    except Exception as e:
-        st.error(f"Error encountered during model inference.")
-        st.error(e)
+        # reset source image to None
+        source_img = None
+
+# exception for any errors during model inference
+except Exception as e:
+    st.error('Error encountered during model inference.')
+    st.error(e)
