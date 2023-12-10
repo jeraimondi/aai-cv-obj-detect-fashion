@@ -90,5 +90,5 @@ guidance, and support throughout this course.
 ## References
 
 Wood, L., Tan, Z., Stenbit, I., Bischof, J., Zhu, S., Chollet, F., Sreepathihalli, D., Sampath, R., & others. (2022). 
-KerasCV. Retrieved from 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/keras-team/keras-cv
+KerasCV. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieved from https://github.com/keras-team/keras-cv
