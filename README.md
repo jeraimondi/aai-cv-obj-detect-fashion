@@ -3,15 +3,26 @@
 This project is a part of the AAI-521 Intro to Computer Vision course in the Applied Artificial Intelligence Program at 
 the University of San Diego (USD).
 
-### <b>Project Status: Active</b>
+### <b>Project Status: Completed</b>
 
 ## Streamlit Web Application
 
 https://aai-cv-obj-detect-fashion.streamlit.app/
 
 <p align='center'>
-<img src='data/streamlit_app_screenshot.png'>
+<img src='data/streamlit_app_screenshot.png' />
 </p>
+
+## Presentation
+
+<p align='left'>
+<a href='https://youtu.be/ZPXpaPc32ts'><img src='data/presentation_title_slide.png' alt='Presentation title slide.' style='width:480px; height:270px;' /></a>
+</p>
+
+* Area of Focus
+  * [Exploration, Base Model](https://youtu.be/ZPXpaPc32ts?t=00m00s) - Presented by Abdul Shariq
+  * [RetinaNet](https://youtu.be/ZPXpaPc32ts?t=07m11s) - Presented by Jason Raimondi
+  * [YOLOv8](https://youtu.be/ZPXpaPc32ts?t=14m11s) - Presented by Kayla Wright
 
 ## Installation
 
@@ -82,6 +93,10 @@ Classes of the dataset include:
 * Dress
 * Bag
 * Shoe
+
+## License
+
+[MIT License](LICENSE)
 
 ## Acknowledgments
 Thank you to all the USD professors: Dr. Albuyeh, Dr. Sadeghian, and Dr. Sardari for your continued dedication, 
