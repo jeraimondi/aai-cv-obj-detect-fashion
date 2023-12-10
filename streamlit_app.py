@@ -107,7 +107,7 @@ def run_model(inputs):
 
 
 # path to pretrained model
-model_path = 'models/best.pt'
+model_path = 'models/yolo_v8/best.pt'
 
 try:
     # load model
