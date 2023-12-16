@@ -3,7 +3,7 @@
 This project is a part of the AAI-521 Intro to Computer Vision course in the Applied Artificial Intelligence Program at 
 the University of San Diego (USD).
 
-### <b>Project Status: Completed</b>
+### <b>Project Status: Completed 12/11/2023</b>
 
 ## Streamlit Web Application
 
